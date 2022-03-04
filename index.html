@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" crossorigin="anonymous">
+
+    <!-- Jquert CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
+    <title>Hello, world!</title>
+    <style>
+        .playground{
+            width: 300px;
+            margin: 0 auto;
+        }
+        .playground-sm{
+            height: 100px;
+            width: 100px;
+        }
+        .cursor-pointer{
+            cursor: pointer;
+        }
+        .pixels{
+            width: 10px;
+            height: 10px;
+        }
+        .playground div{
+            margin: 0px !important;
+            padding: 0px !important;
+        }
+        @media only screen and (max-width: 650px) {
+            #playground-lg{
+                width: 100% !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container border rounded m-5 mx-auto"  >
+        <div class="display-4 text-center">
+            TIK TAK TOE
+        </div>
+        <div  class="w-50 border rounded m-5 mx-auto">
+            <div class="d-inline-block border-right w-50 ">
+                <div class="d-inline-block">X  :  </div>
+                <div class="d-inline-block text-right" id="scoreX">
+                    0
+                </div>
+            </div>
+
+            <div class="d-inline-block border-left text-center">
+                <div class="d-inline-block">O  :  </div>
+                <div class="d-inline-block" id="scoreO">
+                    0
+                </div>
+            </div>
+        </div>
+        <div class="w-75 border rounded m-5 p-5 mx-auto" id="playground-lg">
+            <div class="playground">
+                <div class="row">
+                    <div class="playground-sm border-right border-bottom" id="pg00"></div>
+                    <div class="playground-sm border-bottom" id="pg01"></div>
+                    <div class="playground-sm border-left border-bottom" id="pg02"></div>
+                </div>
+                <div class="row">
+                    <div class="playground-sm border-right border-bottom" id="pg10"></div>
+                    <div class="playground-sm border-bottom" id="pg11"></div>
+                    <div class="playground-sm border-left border-bottom" id="pg12"></div>
+                </div>
+                <div class="row">
+                    <div class="playground-sm border-right" id="pg20"></div>
+                    <div class="playground-sm" id="pg21"></div>
+                    <div class="playground-sm border-left" id="pg22"></div>
+                </div>
+            </div>       
+        </div>
+        <div class="text-center">
+            <p class="display-5 d-inline-block text-success cursor-pointer mb-4" id="btnOyunBaslat">
+                Oyunu Tekrar Başlat
+            </p>
+        </div>
+    </div>
+    
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"  crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"  crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js"  crossorigin="anonymous"></script>
+    
+    <script>
+        $( document ).ready(function() {
+            var scoreO = 0;
+            var scoreX = 0;
+            var counter = -1;
+            var playground = [[0,0,0],[0,0,0],[0,0,0]];
+            function createX(){
+                var txt = '<div class="row">';
+                var l = 0;
+                let i = [13,18,22,23,24,27,28,29,33,34,35,36,37,38,44,45,46,47,54,55,56,57,63,64,65,66,67,68,72,73,74,77,78,79,83,88];
+                for(let k = 1;k<101;k++){                    
+                    if(k==i[l]){  
+                        txt +='<div class="pixels bg-dark col"></div>';
+                        l++;
+                    }
+                    else{
+                        txt +='<div class="pixels col"></div>';
+                    }
+                    if(k%10==0&&k!=100){
+                        txt+='</div><div class="row">'
+                    }
+                }
+                txt +='</div>'
+                return txt;
+            }
+            function createO(){
+                var txt = '<div class="row">';
+                var l = 0;
+                let i = [14,15,16,17,23,28,32,33,38,39,42,43,48,49,52,53,58,59,62,63,68,69,73,78,84,85,86,87];
+                for(let k = 1;k<101;k++){                    
+                    if(k==i[l]){  
+                        txt +='<div class="pixels bg-dark col"></div>';
+                        l++;
+                    }
+                    else{
+                        txt +='<div class="pixels col"></div>';
+                    }
+                    if(k%10==0&&k!=100){
+                        txt+='</div><div class="row">'
+                    }
+                }
+                txt +='</div>'
+                return txt;
+            }
+            function winner(wnnr){
+                if(wnnr=="o"){
+                    scoreO++;
+                    document.getElementById("scoreO").innerHTML = scoreO;
+                }
+                else{
+                    scoreX++;
+                    document.getElementById("scoreX").innerHTML = scoreX;
+                }
+                alert("Kazanan : " + wnnr)
+                counter = -1;
+                playground = [[0,0,0],[0,0,0],[0,0,0]];
+                updatePlayground();
+            }
+            function checkTheGame(){
+                var horizontalO = 0;
+                var horizontalX = 0;
+                var verticalO = 0;
+                var verticalX = 0;
+                var crossCheckO = 0;
+                var crossCheckX = 0;   
+                for(var k = 0;k<3;k++){
+                    horizontalO = 0;
+                    horizontalX = 0;
+                    verticalO = 0;
+                    verticalX = 0;
+                    for(var l = 0;l<3;l++){
+                        if(playground[k][l]=="o"){
+                            horizontalO++;
+                        }
+                        else if(playground[k][l]=="x"){
+                            horizontalX++
+                        }
+                        if(playground[l][k]=="o"){
+                            verticalO++;
+                        }
+                        else if(playground[l][k]=="x"){
+                            verticalX++
+                        }
+                        if(k==l){
+                            if(playground[k][l]=="x"){
+                                crossCheckX++;
+                            }
+                            if(playground[k][l]=="o"){
+                                crossCheckO++;
+                            }
+                        }
+                    }
+                    if(horizontalO==3||verticalO==3){
+                        winner("o");
+                    } 
+                    else if(verticalX==3||horizontalX==3){
+                        winner("x");
+                    }
+                }
+                if(crossCheckO==3){
+                    winner("o");
+                }
+                if(crossCheckX==3){
+                    winner("x");
+                }
+                if(playground[0][2]==playground[1][1]&&playground[1][1]==playground[2][0]&&playground[0][2]!=0){
+                    winner(playground[0][2]);
+                }
+                if(counter==8){
+                    alert("Beraberlik ")
+                    counter = -1;
+                    playground = [[0,0,0],[0,0,0],[0,0,0]];
+                    updatePlayground();
+                }
+            }
+            function updatePlayground(){
+                for(let i = 0;i<3;i++){
+                    for(let k = 0;k<3;k++){
+                        if(playground[i][k]=="x"){
+                            txt = createX();
+                            document.getElementById("pg"+i.toString()+k.toString()).innerHTML = txt;
+                        }
+                        else if(playground[i][k]=="o"){
+                            txt = createO();
+                            document.getElementById("pg"+i.toString()+k.toString()).innerHTML = txt;
+                        }
+                        else{
+                            document.getElementById("pg"+i.toString()+k.toString()).innerHTML = "";
+                        }
+                    }
+                }
+            }
+            function playerCheck(){
+                counter++;
+                if(counter%2==0){
+                    return "x";
+                }
+                else{
+                    return "o";
+                }   
+            }
+            function gameEngine(i,k){
+                playground[i][k] = playerCheck();
+                updatePlayground();
+                checkTheGame(); 
+            }
+            $('#btnOyunBaslat').click(function(){
+                counter = -1;
+                playground = [[0,0,0],[0,0,0],[0,0,0]];
+                updatePlayground();
+            });
+            $('#pg00').click(function(){
+                gameEngine(0,0);
+            });
+            $('#pg01').click(function(){
+                gameEngine(0,1);
+            });
+            $('#pg02').click(function(){
+                gameEngine(0,2);  
+            });
+            $('#pg10').click(function(){
+                gameEngine(1,0); 
+            });
+            $('#pg11').click(function(){
+                gameEngine(1,1);  
+            });
+            $('#pg12').click(function(){
+                gameEngine(1,2);  
+            });
+            $('#pg20').click(function(){
+                gameEngine(2,0); 
+            });
+            $('#pg21').click(function(){
+                gameEngine(2,1);  
+            });
+            $('#pg22').click(function(){
+                gameEngine(2,2);  
+            });
+            
+        });
+    </script>
+</body>
+</html>
